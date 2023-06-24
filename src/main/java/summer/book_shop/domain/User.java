@@ -2,13 +2,14 @@ package summer.book_shop.domain;
 
 import java.util.Date;
 
-public class User { // html jsp (x) - domain, repository
+public class User {
 
     private String userId; // PK
     private String password;
     private String phoneNum;
     private String nickname;
     private Date birthDate;
+    private Grade grade;
 
     public String getUserId() {
         return userId;
@@ -48,5 +49,13 @@ public class User { // html jsp (x) - domain, repository
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public Grade getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Grade grade) {
+        this.grade = grade;
     }
 }

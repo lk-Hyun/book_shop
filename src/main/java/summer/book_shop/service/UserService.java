@@ -1,8 +1,5 @@
 package summer.book_shop.service;
 
-import summer.book_shop.domain.User;
-import summer.book_shop.repository.UserRepository;
-
 // 메인 기능
 // 1. 회원 관리, 2. 상품 관리 3. 고객센터 4. 주문
 // 1.1 회원 정보 수정, 회원 삭제, 회원 가입, 회원 등급 적용
@@ -12,32 +9,48 @@ import summer.book_shop.repository.UserRepository;
 
 // 예외처리, 테스트 코드 작성
 
+import org.springframework.stereotype.Service;
+import summer.book_shop.domain.User;
+import summer.book_shop.exception.UserException;
+import summer.book_shop.exception.UserExceptionType;
+import summer.book_shop.repository.UserRepository;
+
+import java.util.List;
+
+@Service
 public class UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public void signUp(User user) throws Exception {
+    public UserService() {
+        this.userRepository = new UserRepository();
+    }
+
+    public void signUp(User user) throws UserException {
+        if (userRepository.existByUserId(user.getUserId())) {
+            throw new UserException(UserExceptionType.ALREADY_EXIST_ID);
+        }
         if (userInfoNotValidate(user)) {
-            throw new Exception("사용자 입력 정보가 올바르지 않습니다.");
+            throw new UserException(UserExceptionType.CANNOT_REGISTER);
         }
 
         userRepository.save(user);
     }
 
-    public void signOut(String userId, String password, String cPassword) throws Exception {
+    public void signOut(String userId, String password, String cPassword) throws UserException {
         if (!userRepository.existByUserId(userId)) {
-            throw new Exception("사용자를 찾을 수 없습니다.");
+            throw new UserException(UserExceptionType.NOT_FOUND_MEMBER);
         }
         if (!password.equals(cPassword)) {
-            throw new Exception("비밀번호가 일치하지 않습니다.");
+            throw new UserException(UserExceptionType.NOT_EQUAL_PASSWORD);
         }
 
         userRepository.delete(userId);
     }
 
-    public void updateUserInfo(String userId, String password) throws Exception { // 유저 정보 수정 시 인증 코드와 일치하면 수정되도록 변경 예정
+    public void updateUserInfo(String userId, String password) throws UserException { // 유저 정보 수정 시 인증 코드와 일치하면 수정되도록 변경 예정
         if (!userRepository.existByUserId(userId)) {
-            throw new Exception("사용자를 찾을 수 없습니다.");
+            throw new UserException(UserExceptionType.NOT_FOUND_MEMBER);
         }
 
         userRepository.updatePassword(userId, password);
@@ -45,6 +58,14 @@ public class UserService {
 
     public User getUserInfo(String userId) {
         return userRepository.findByUserId(userId);
+    }
+
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+    public List<User> getAllUserInfo() {
+        return userRepository.findAll();
     }
 
     private boolean userInfoNotValidate(User user) {

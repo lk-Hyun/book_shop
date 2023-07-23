@@ -37,6 +37,16 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public boolean login(String userId, String password) throws UserException {
+        if (!userRepository.existByUserId(userId)) {
+            throw new UserException(UserExceptionType.NOT_FOUND_MEMBER);
+        }
+
+        User user = userRepository.findByUserId(userId);
+
+        return user.getPassword().equals(password);
+    }
+
     public void signOut(String userId, String password, String cPassword) throws UserException {
         if (!userRepository.existByUserId(userId)) {
             throw new UserException(UserExceptionType.NOT_FOUND_MEMBER);
@@ -44,8 +54,11 @@ public class UserService {
         if (!password.equals(cPassword)) {
             throw new UserException(UserExceptionType.NOT_EQUAL_PASSWORD);
         }
+        User user = userRepository.findByUserId(userId);
 
-        userRepository.delete(userId);
+        if (user.getPassword().equals(password)) {
+            userRepository.delete(userId);
+        }
     }
 
     public void updateUserInfo(String userId, String password) throws UserException { // 유저 정보 수정 시 인증 코드와 일치하면 수정되도록 변경 예정

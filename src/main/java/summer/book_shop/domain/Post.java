@@ -1,17 +1,18 @@
 package summer.book_shop.domain;
 
+import lombok.*;
+
 import java.util.Date;
 
+@Data
 public class Post {
-
     private Long postId; // PK
     private String title;
     private String content;
     private String review;
-    private int like;
+    private int likeCount;
     private int views;
     private String bookId;
-    private Date updateDate;
 
     public Long getPostId() {
         return postId;
@@ -45,12 +46,12 @@ public class Post {
         this.review = review;
     }
 
-    public int getLike() {
-        return like;
+    public int getLikeCount() {
+        return likeCount;
     }
 
-    public void setLike(int like) {
-        this.like = like;
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
     }
 
     public int getViews() {
@@ -76,4 +77,18 @@ public class Post {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    private Date updateDate;
+
+    public Post(Long postId, String title, String content, String review, int views) {
+        this.postId = postId;
+        this.title = title;
+        this.content =content;
+        this.review = review;
+        this.views = views;
+    }
+    public  Post(){
+
+    }
+
 }

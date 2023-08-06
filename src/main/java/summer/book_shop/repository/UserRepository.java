@@ -26,12 +26,10 @@ public class UserRepository {
         String password = "skq1w2e#";
 
         try {
-            Class.forName(driver); // forName 을 통해 JVM 에 메모리를 올린다 (JDBC 4.0 이후로는 사용하지 않아도 자동 초기화)
+//            Class.forName(driver); // forName 을 통해 JVM 에 메모리를 올린다 (JDBC 4.0 이후로는 사용하지 않아도 자동 초기화)
             conn = DriverManager.getConnection(url, userName, password); // 이후 등록된 정보를 통해 데이터베이스 연결
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 

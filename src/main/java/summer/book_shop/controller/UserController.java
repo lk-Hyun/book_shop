@@ -1,6 +1,7 @@
 package summer.book_shop.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,27 +12,21 @@ import summer.book_shop.domain.dto.UserRequestDto;
 import summer.book_shop.exception.UserException;
 import summer.book_shop.service.UserService;
 
-/*
-테스트 목록
-1. 유저 회원가입 성공 여부
-2. 유저 로그인 성공 여부
-3. 회원 탈퇴 성공 여부
-4. 회원 정보 수정 여부 (바뀐 회원 정보 반환)
- */
-
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/user/signup")
     public ResponseEntity signUp(@RequestBody UserRequestDto requestDto) {
-
         try {
+            log.info("user = {}", requestDto.toEntity());
             userService.signUp(requestDto.toEntity());
+
         } catch (UserException e) {
-            System.out.println(e.getExceptionType().getErrorMessage());
+            log.info(e.getExceptionType().getErrorMessage());
             return new ResponseEntity(e.getExceptionType().getErrorMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity("register success!", HttpStatus.OK);
@@ -46,7 +41,7 @@ public class UserController {
             }
             return new ResponseEntity("login failed!", HttpStatus.OK);
         } catch (UserException e) {
-            System.out.println(e.getExceptionType().getErrorMessage());
+            log.info(e.getExceptionType().getErrorMessage());
             return new ResponseEntity(e.getExceptionType().getErrorMessage(), HttpStatus.BAD_GATEWAY);
         }
     }

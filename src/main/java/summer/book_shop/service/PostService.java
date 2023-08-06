@@ -1,36 +1,68 @@
 package summer.book_shop.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import summer.book_shop.domain.Post;
+import summer.book_shop.exception.PostException;
+import summer.book_shop.exception.PostExceptionType;
 import summer.book_shop.repository.PostRepository;
-import java.sql.Date;
+
 import java.util.List;
 
+@Service
 public class PostService {
     private PostRepository postRepository;
+    @Autowired
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 
     public void createPost(Post post) {
-        //예외처리 필요
+        if (false) {
+            throw new PostException(PostExceptionType.CANNOT_CREATE_POST);
+        }
         postRepository.save(post);
+    }
+
+    public void deleteAll() {
+        postRepository.deleteAll();
     }
 
     public void removePost(Long postId) throws Exception {
         if (!postRepository.existByPostId(postId)) {
-            throw new RuntimeException("포스트를 찾을 수 없습니다.");
+            throw new PostException(PostExceptionType.NOT_FOUND_POST);
         }
         postRepository.delete(postId);
     }
 
-    //최신순으로 정렬
-    public List<Post> orderPostByUpdateDate(Date updateDate) throws Exception{
-        return postRepository.findPostsOrderByLatest(updateDate);
-    }
-    //좋아요순
-    public List<Post> orderPostByLike(int like) throws Exception{
-        return postRepository.findPostsOrderByLikes(like);
-    }
-    //조회수순
-    public List<Post> orderPostByviews(int views) throws Exception{
-        return postRepository.findPostsOrderByViews(views);
+    public Post getPostInfo(Long postId) {
+        Post post = postRepository.findByPostId(postId);
+        if (!postRepository.existByPostId(postId)) {
+            throw new PostException(PostExceptionType.NOT_FOUND_POST);
+        }
+        return post;
     }
 
+    //최신순으로 정렬
+    public List<Post> orderByUpdateDate() {
+        return postRepository.findPostsOrderByLatest();
+    }
+
+    //좋아요순
+    public List<Post> orderByLike() {
+        return postRepository.findPostsOrderByLikes();
+    }
+
+    //조회수순
+    public List<Post> orderByView() {
+        return postRepository.findPostsOrderByViews();
+    }
+
+    public List<Post> allPost() throws PostException {
+        try {
+            return postRepository.findAll();
+        } catch (Exception e) {
+            throw new PostException(PostExceptionType.CANNOT_CREATE_POST);
+        }
+    }
 }
